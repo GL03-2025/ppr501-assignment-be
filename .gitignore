@@ -1,5 +1,30 @@
 .env
 
-# Ignore Python cache files
+# Byte-compiled / optimized / DLL files
 __pycache__/
+**/__pycache__/
+
 *.py[cod]
+
+# C extensions
+*.so
+
+# Virtual environments
+env/
+venv/
+ENV/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
