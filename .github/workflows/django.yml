@@ -41,10 +41,10 @@ jobs:
           port: 22 
           script: |
             echo "Pulling latest Docker image..."
-            echo "${{ secrets.DOTENV_FILE }}" > ${{ secrets.PROJECT_PATH }}
             docker pull ${{ secrets.DOCKER_USERNAME }}/techify-store:latest
             echo "Stopping and removing existing container..."
             docker stop techify-store || true
             docker rm techify-store || true
-            docker run -d -p 8000:8000 --name techify-store ${{ secrets.DOCKER_USERNAME }}/techify-store:latest
+            echo "${{ secrets.DOTENV_FILE }}" >/app/.env 
+            docker run -d -p 8000:8000 --env-file /app/.env --name techify-store ${{ secrets.DOCKER_USERNAME }}/techify-store:latest
 
