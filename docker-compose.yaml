@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: techify-store
+    command: gunicorn --bind 0.0.0.0:8000 techify-store.wsgi:application
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=1
+      - DATABASE_URL=${DATABASE_URL}
+  
