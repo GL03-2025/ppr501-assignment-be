@@ -27,7 +27,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: your-dockerhub-username/myproject:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/techify-store:latest
 
       # Step 4: Deploy on VPS (using SSH)
       - name: Deploy to VPS
@@ -37,8 +37,8 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            docker pull your-dockerhub-username/myproject:latest
-            docker stop myproject || true
-            docker rm myproject || true
-            docker run -d -p 8000:8000 --name myproject your-dockerhub-username/myproject:latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/techify-store:latest
+            docker stop techify-store || true
+            docker rm techify-store || true
+            docker run -d -p 8000:8000 --name techify-store ${{ secrets.DOCKER_USERNAME }}/techify-store:latest
 
