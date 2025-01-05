@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
+    # @SangTran-127: I just want to say hello at root 😃
+    path('', include('hello_world.urls')),
     path('admin/', admin.site.urls),
     path('products/', include('products.urls')),
     path('categories/', include('categories.urls'))
