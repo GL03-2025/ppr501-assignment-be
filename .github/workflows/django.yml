@@ -38,8 +38,11 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22 
           script: |
+            echo "Pulling latest Docker image..."
             docker pull ${{ secrets.DOCKER_USERNAME }}/techify-store:latest
+            echo "Stopping and removing existing container..."
             docker stop techify-store || true
             docker rm techify-store || true
             docker run -d -p 8000:8000 --name techify-store ${{ secrets.DOCKER_USERNAME }}/techify-store:latest
