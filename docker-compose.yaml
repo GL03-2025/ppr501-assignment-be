@@ -10,6 +10,4 @@ services:
     env_file:
       - .env
     environment:
-      - DEBUG=1
-      - DATABASE_URL=${DATABASE_URL}
-  
+      - DEBUG=1  

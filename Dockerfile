@@ -6,9 +6,6 @@ ENV PYTHONUNBUFFERED=1
 # Set working directory in the container
 WORKDIR /app
 
-# Copy the .env file into the container
-COPY .env /app/.env
-
 # Copy requirements.txt and install dependencies
 COPY requirements.txt /app/
 RUN ls -l /app/ && cat /app/requirements.txt
