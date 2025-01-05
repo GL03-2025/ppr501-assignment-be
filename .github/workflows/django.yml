@@ -45,6 +45,6 @@ jobs:
             echo "Stopping and removing existing container..."
             docker stop techify-store || true
             docker rm techify-store || true
-            echo "${{ secrets.DOTENV_FILE }}" > /app/.env 
+            echo "${{ secrets.DOTENV_FILE }}" > .env 
             docker run --env-file .env -d -p 8000:8000 --name techify-store ${{ secrets.DOCKER_USERNAME }}/techify-store:latest
 
