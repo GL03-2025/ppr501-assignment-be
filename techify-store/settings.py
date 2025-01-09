@@ -22,10 +22,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
-# Init env
-env = environ.Env()
-# Read env
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+# # Init env
+# env = environ.Env()
+# # Read env
+# environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-gqau51bv-9_r3i)e+qa^m(ag9ttmytyg1r^&9j)gc^z7_89_!v'
@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'corsheaders',
     # drf-spectacular --> lib pip install drf-spectacular
     'drf_spectacular',
-    # 
+    #
     'hello_world',
     'products',
     'categories',
@@ -97,8 +97,18 @@ WSGI_APPLICATION = 'techify-store.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': env.db()
+# }
 DATABASES = {
-    'default': env.db()
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'assignment',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': 'localhost',  # Hoặc địa chỉ IP của PostgreSQL server
+        'PORT': '5431',       # Hoặc cổng mà PostgreSQL đang chạy
+    }
 }
 
 # Password validation

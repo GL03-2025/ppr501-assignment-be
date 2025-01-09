@@ -128,9 +128,9 @@ class CustomPagination(PageNumberPagination):
 class UserFilter(FilterSet):
     status = filters.CharFilter(field_name='status', lookup_expr='exact') # Tra cứu chính xác
     name = filters.CharFilter(field_name='username', lookup_expr='icontains') # Tra cứu chuỗi con, không phân biệt chữ hoa/thường
-    # class Meta:
-    #     model = User
-    #     fields = ['status','username']
+    class Meta:
+        model = User
+        fields = ['status','username']
 
 
 # ======================= Test =======================
