@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+from products.serializers import GetProductTmpSerializer
 from .models import Category
 
 from django_filters import rest_framework as filters
@@ -11,6 +13,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 # map dữ liệu từ model sang json
 class GetCategorySerializer(serializers.ModelSerializer):
+    products = GetProductTmpSerializer(many=True, read_only=True)
     class Meta:
         model = Category
         fields = '__all__'
