@@ -28,3 +28,10 @@ class User(AbstractUser):
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
+
+class AccountDetail(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    additional_info = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.user.email
