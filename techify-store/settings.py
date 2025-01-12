@@ -54,6 +54,8 @@ INSTALLED_APPS = [
     'drf_spectacular',
     #
     'hello_world',
+    'common',
+    'orders',
     'products',
     'categories',
     'rest_framework',

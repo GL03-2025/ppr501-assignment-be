@@ -2,7 +2,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
-from accounts.models import User, UserStatus
+from accounts.models import User, AccountDetail, UserStatus
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -61,7 +61,16 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
 
+        AccountDetail.objects.create(user=user)
+
         return user
+
+class AccountDetailSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(source='user.email')
+
+    class Meta:
+        model = AccountDetail
+        fields = ['id', 'email']
 
 
 class SetNewPasswordSerializer(serializers.Serializer):
