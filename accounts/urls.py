@@ -14,7 +14,7 @@ urlpatterns = [
     path('manage-accounts/', UserListView.as_view({'get': 'list'}), name='manage-account'),
     path('manage-account/<int:pk>/', UserDetailView.as_view(), name='user-detail'),
     # Test ==================================
-    path('test/', views.testEndPoint, name='test'),
-    path("test_post", views.MyView.as_view(), name="test_post"),
+    # path('test/', views.testEndPoint, name='test'),
+    # path("test_post", views.MyView.as_view(), name="test_post"),
     # ========================================
 ]

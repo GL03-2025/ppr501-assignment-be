@@ -1,20 +1,7 @@
 from rest_framework import serializers
 from .models import Product, Image
-from categories.models import Category
 from django_filters import rest_framework as filters
 
-# class ProductSerializer(serializers.ModelSerializer):
-#     category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
-#
-#     class Meta:
-#         model = Product
-#         fields = ['id', 'name', 'price', 'category', 'img_url']
-#
-#     def create(self, validated_data):
-#         # Category is already resolved to an instance by PrimaryKeyRelatedField
-#         category = validated_data.pop('category')
-#         product = Product.objects.create(category=category, **validated_data)
-#         return product
 
 class GetImagesSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,8 +9,8 @@ class GetImagesSerializer(serializers.ModelSerializer):
         fields = ['id','image','created_at']
 
 class GetProductTmpSerializer(serializers.ModelSerializer):
-    # image = GetImagesSerializer(many=True, read_only=True, source='images')
     images = GetImagesSerializer(many=True)
+    is_deleted = serializers.BooleanField(read_only=True)
     class Meta:
         model = Product
         fields = '__all__'
@@ -32,6 +19,7 @@ class GetProductTmpSerializer(serializers.ModelSerializer):
 
 class GetProductSerializer(serializers.ModelSerializer):
     images = GetImagesSerializer(many=True)
+    is_deleted = serializers.BooleanField(read_only=True)
     class Meta:
         model = Product
         fields = '__all__'
@@ -52,9 +40,10 @@ class GetProductSerializer(serializers.ModelSerializer):
 class ProductFilter(filters.FilterSet):
     name = filters.CharFilter(field_name='name', lookup_expr='icontains')
     slug = filters.CharFilter(field_name='slug', lookup_expr='icontains')
+    is_deleted = filters.BooleanFilter(field_name='is_deleted')
     class Meta:
         model = Product
-        fields = ['slug','name']
+        fields = ['slug','name','is_deleted']
 
 class CustomImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -63,9 +52,12 @@ class CustomImageSerializer(serializers.ModelSerializer):
 
 class SetProductSerializer(serializers.ModelSerializer):
     images = CustomImageSerializer(many=True, write_only =True )
+    is_deleted = serializers.BooleanField(read_only=True)
+    is_active = serializers.BooleanField(read_only=True)
     class Meta:
         model = Product
         fields = '__all__'
+        # exclude = ['is_deleted']
     def create(self, validated_data):
         images_data = validated_data.pop('images', [])
         # ** Nó sẽ lỗi dữ liệu từ dictionary thành các tham số với keyword arguments

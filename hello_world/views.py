@@ -3,4 +3,8 @@ from rest_framework.response import Response
 
 class HelloAPIView(APIView):
     def get(self, request, *args, **kwargs):
-        return Response({"message": "Hello, world!"})
+        base_url = request.build_absolute_uri('/')[:-1].strip("/")
+        routes = [
+            f'{base_url}/api/schema/swagger-ui/'
+        ]
+        return Response(routes)

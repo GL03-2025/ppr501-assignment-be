@@ -1,10 +1,13 @@
-from rest_framework import generics, status
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics, status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from accounts.models import AccountDetail
+from accounts.serializer import CustomPagination
 from .models import Order
-from .serializer import OrderSerializer, CreateOrderResponseSerializer
+from .serializer import OrderSerializer, CreateOrderResponseSerializer, OrderCreateSerializer, GetAllOrderSerializer, \
+    OrderFilter
 from rest_framework.exceptions import NotFound
 
 class OrderCreateView(generics.CreateAPIView):
@@ -58,3 +61,15 @@ class OrderDeleteView(generics.DestroyAPIView):
         if order.accountId.user != self.request.user:
             raise NotFound("You do not have permission to delete this order.")
         return order
+
+class OrderTmpListView(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = GetAllOrderSerializer
+    pagination_class = CustomPagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = OrderFilter
+    # permission_classes = [IsAuthenticated]  # Phân quyền
+
+class OrderTmpCreateView(generics.CreateAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderCreateSerializer

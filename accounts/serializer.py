@@ -36,7 +36,8 @@ class RegisterSerializer(serializers.ModelSerializer):
     status = serializers.ChoiceField(
         choices=[(status.value, status.name) for status in UserStatus],
         required=False,
-        default='active'  # Giá trị mặc định là 'active'
+        default='active',
+        read_only= True# Giá trị mặc định là 'active'
     )
 
     class Meta:

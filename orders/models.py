@@ -21,3 +21,12 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order {self.id} - {self.status}"
+
+class OrderDetail(models.Model):
+    orderId = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_details' ) # related_name để truy xuất từ Order
+    productId = models.ForeignKey('products.Product', on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=0)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"Order {self.orderId.id} - {self.productId.name} - {self.quantity} - {self.price}"

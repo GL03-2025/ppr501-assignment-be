@@ -1,13 +1,13 @@
 from django.db import models
 from django.utils.text import slugify
 
-# Create your models here.
+
 class Product(models.Model):
     name = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    # img_url = models.CharField(blank=True)
     description = models.TextField(blank=True)
-
+    is_deleted = models.BooleanField(default=False)
+    quantity = models.IntegerField(default=0)
     # Slug 
     slug = models.SlugField(max_length=255, unique=True, blank=True)
     # # Relations
