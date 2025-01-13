@@ -1,24 +1,39 @@
+import uuid
 from enum import Enum
 from django.db import models
 from accounts.models import AccountDetail
 
 class OrderStatus(Enum):
-    ACTIVE = 'active'
-    INACTIVE = 'inactive'
+    UNPAID = 'unpaid'
+    FAILED = 'failed'
+    PAID = 'paid'
 
     @classmethod
     def choices(cls):
-        return [(tag.value, tag.name) for tag in cls]
+        return [(tag.value, tag.name.replace('_', ' ').capitalize()) for tag in cls]
+
+class TransactionMethod(Enum):
+    VNPAY = 'vnpay'
+    CASH = 'cash'
+    NOPAY = 'nopay'
+
+    @classmethod
+    def choices(cls):
+        return [(tag.value, tag.name.replace('_', ' ').capitalize()) for tag in cls]
 
 class Order(models.Model):
     accountId = models.ForeignKey(AccountDetail, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    status = models.CharField(max_length=50, default='active')
+    status = models.CharField(
+        max_length=100, choices=OrderStatus.choices(), default=OrderStatus.UNPAID.value)
     description = models.TextField()
     content = models.TextField()
     notes = models.TextField()
-    method = models.CharField(max_length=50)
-
+    method = models.CharField(
+        max_length=100, choices=TransactionMethod.choices(), default=TransactionMethod.NOPAY.value)
+    payment_url = models.CharField(max_length=700, null=True, blank=True)
+    redirect_url = models.URLField(null=True, blank=True)
+    order_uuid = models.UUIDField(default=uuid.uuid4, unique=True)
     def __str__(self):
         return f"Order {self.id} - {self.status}"
 

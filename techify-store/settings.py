@@ -100,10 +100,19 @@ WSGI_APPLICATION = 'techify-store.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': env.db()
+# }
 DATABASES = {
-    'default': env.db()
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'assignment',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': 'localhost',  # Hoặc địa chỉ IP của PostgreSQL server
+        'PORT': '5431',       # Hoặc cổng mà PostgreSQL đang chạy
+    }
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -204,3 +213,18 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'careconnect625@gmail.com'
 EMAIL_HOST_PASSWORD = 'hxee gbfj tshw qfao'
 DEFAULT_FROM_EMAIL = 'careconnect625@gmail.com'
+
+
+# VNPAY CONFIG
+VNPAY_RETURN_URL = '/orders/payment/return/'  # get from config
+VNPAY_PAYMENT_URL = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'  # get from config
+VNPAY_API_URL = 'https://sandbox.vnpayment.vn/merchant_webapi/api/transaction'
+VNPAY_TMN_CODE = 'O0F551ER'  # Website ID in VNPAY System, get from config
+VNPAY_HASH_SECRET_KEY = 'LWJLY0BVT8IOGX1KHAAML0BKV1K4B56Y'  # Secret key for create checksum,get from config
+
+# - Thành công:
+# Ngân hàng: NCB
+# Số thẻ: 9704198526191432198
+# Tên chủ thẻ:NGUYEN VAN A
+# Ngày phát hành:07/15
+# Mật khẩu OTP:123456

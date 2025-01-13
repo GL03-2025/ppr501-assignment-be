@@ -1,14 +1,20 @@
+from django.http import JsonResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, status, viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from accounts.models import AccountDetail
+from django.conf import settings
 from accounts.serializer import CustomPagination
-from .models import Order
+from .models import Order, OrderStatus
 from .serializer import OrderSerializer, CreateOrderResponseSerializer, OrderCreateSerializer, GetAllOrderSerializer, \
     OrderFilter
 from rest_framework.exceptions import NotFound
+
+from .vnpay import vnpay
 
 class OrderCreateView(generics.CreateAPIView):
     queryset = Order.objects.all()
@@ -91,3 +97,65 @@ class OrderTmpListView(viewsets.ModelViewSet):
 class OrderTmpCreateView(generics.CreateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderCreateSerializer
+
+
+@api_view(['GET'])
+def payment_return(request):
+    inputData = request.GET
+    if inputData:
+        vnp = vnpay()
+        vnp.responseData = inputData.dict()
+        order_uuid = inputData['vnp_TxnRef']
+        amount = int(inputData['vnp_Amount']) / 100
+        order_desc = inputData['vnp_OrderInfo']
+        transaction = inputData['vnp_TransactionNo']
+        response= inputData['vnp_ResponseCode']
+        # vnp_TmnCode = inputData['vnp_TmnCode']
+        # vnp_PayDate = inputData['vnp_PayDate']
+        # vnp_BankCode = inputData['vnp_BankCode']
+        # vnp_CardType = inputData['vnp_CardType']
+
+        if vnp.validate_response(settings.VNPAY_HASH_SECRET_KEY):
+            if response == "00":  # Thanh toán thành công
+                order = get_object_or_404(Order, order_uuid=order_uuid)
+                order.status = OrderStatus.PAID.value
+                order.save()
+                if order.redirect_url:
+                    return HttpResponseRedirect(order.redirect_url)
+                return JsonResponse({
+                    "title": "Kết quả thanh toán",
+                    "result": "Thanh toán thành công",
+                    "order_uuid": order_uuid,
+                    "amount": amount,
+                    "order_desc": order_desc,
+                    "vnp_TransactionNo": transaction,
+                    "vnp_ResponseCode": response
+                })
+
+            else:
+                return JsonResponse({
+                    "title": "Kết quả thanh toán",
+                    "result": "Lỗi",
+                    "order_uuid": order_uuid,
+                    "amount": amount,
+                    "order_desc": order_desc,
+                    "vnp_TransactionNo": transaction,
+                    "vnp_ResponseCode": response
+                })
+        else:
+            # Sai checksum
+            return JsonResponse({
+                "title": "Kết quả thanh toán",
+                "result": "Lỗi",
+                "order_uuid": order_uuid,
+                "amount": amount,
+                "order_desc": order_desc,
+                "vnp_TransactionNo": transaction,
+                "vnp_ResponseCode": response,
+                "msg": "Sai checksum"
+            })
+    else:
+        return JsonResponse({
+            "title": "Kết quả thanh toán",
+            "result": "Không có dữ liệu"
+        })
