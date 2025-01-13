@@ -1,7 +1,12 @@
 from rest_framework import serializers
 from .models import Product, Image
+from categories.models import Category
 from django_filters import rest_framework as filters
 
+class CategoryDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'name']
 
 class GetImagesSerializer(serializers.ModelSerializer):
     class Meta:
@@ -67,3 +72,12 @@ class SetProductSerializer(serializers.ModelSerializer):
         for image_data in images_data:
             Image.objects.create(product=product, **image_data)
         return product
+
+
+class GetProductSerializer2(serializers.ModelSerializer):
+    images = GetImagesSerializer(many=True)
+    categoryDetail = CategoryDetailSerializer(source='category', read_only=True)
+
+    class Meta:
+        model = Product
+        fields = ['id', 'name', 'price', 'categoryDetail', 'images']
