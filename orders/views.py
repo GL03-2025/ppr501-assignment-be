@@ -51,16 +51,34 @@ class OrderListView(generics.ListAPIView):
     def get_queryset(self):
         return Order.objects.filter(accountId__user=self.request.user)
 
+    def get_object(self):
+        try:
+            order = Order.objects.get(pk=self.kwargs['pk'], accountId__user=self.request.user)
+        except Order.DoesNotExist:
+            raise NotFound("Order not found.")
+        return order
+
 
 class OrderDeleteView(generics.DestroyAPIView):
     queryset = Order.objects.all()
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
-        order = super().get_object()
+        try:
+            order = Order.objects.get(pk=self.kwargs['pk'], accountId__user=self.request.user)
+        except Order.DoesNotExist:
+            raise NotFound("Order not found.")
         if order.accountId.user != self.request.user:
             raise NotFound("You do not have permission to delete this order.")
         return order
+
+    def destroy(self, request, *args, **kwargs):
+        order = self.get_object()
+        order.status = 'inactive'
+        order.save()
+        return Response({
+            'message': 'Order status changed to inactive successfully'
+        }, status=status.HTTP_200_OK)
 
 class OrderTmpListView(viewsets.ModelViewSet):
     queryset = Order.objects.all()

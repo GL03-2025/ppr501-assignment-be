@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'hello_world',
     'common',
     'orders',
+    'cart',
     'products',
     'categories',
     'rest_framework',
