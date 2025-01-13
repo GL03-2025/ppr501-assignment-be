@@ -100,19 +100,10 @@ WSGI_APPLICATION = 'techify-store.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': env.db()
-# }
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'assignment',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': 'localhost',  # Hoặc địa chỉ IP của PostgreSQL server
-        'PORT': '5431',       # Hoặc cổng mà PostgreSQL đang chạy
-    }
+    'default': env.db()
 }
+
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
