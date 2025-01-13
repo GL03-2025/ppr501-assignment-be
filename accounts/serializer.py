@@ -27,6 +27,17 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         # ...
         return token
 
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        user = self.user
+        data['username'] = user.username
+        data['email'] = user.email
+        data['phone'] = user.phone
+        data['address'] = user.address
+        data['status'] = user.status
+
+        return data
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
