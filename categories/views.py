@@ -17,6 +17,7 @@ class CategoryListView(viewsets.ModelViewSet):
 class CategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Category.objects.all()
     serializer_class = GetCategorySerializer
+    # permission_classes = [IsAuthenticated]
 
     def perform_destroy(self, instance):
         instance.is_deleted = True
@@ -26,3 +27,4 @@ class CategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
 class CategoryCreateView(generics.CreateAPIView):
     queryset = Category.objects.all()
     serializer_class = SetCategorySerializer
+    # permission_classes = [IsAuthenticated]
