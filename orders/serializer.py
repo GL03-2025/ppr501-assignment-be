@@ -78,6 +78,7 @@ class OrderCreateSerializer(serializers.ModelSerializer):
         return order
 
 class OrderFilter(filters.FilterSet):
+    userId = filters.CharFilter(field_name='accountId__user__id', lookup_expr='icontains', label='Username contains')
     min_amount = filters.NumberFilter(field_name='amount', lookup_expr='gte', label='Minimum amount')
     max_amount = filters.NumberFilter(field_name='amount', lookup_expr='lte', label='Maximum amount')
     content = filters.CharFilter(field_name='content', lookup_expr='icontains', label='Content contains')
@@ -85,4 +86,4 @@ class OrderFilter(filters.FilterSet):
     method = filters.ChoiceFilter(field_name='method', choices=TransactionMethod.choices(), label='Payment method')
     class Meta:
         model = Order
-        fields = ['amount', 'content', 'status', 'method']
+        fields = ['userId','amount', 'content', 'status', 'method']
