@@ -1,3 +1,5 @@
+from xmlrpc.client import Fault
+
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -103,60 +105,26 @@ class OrderTmpCreateView(generics.CreateAPIView):
 @api_view(['GET'])
 def payment_return(request):
     inputData = request.GET
-    if inputData:
+    if inputData and 'vnp_TxnRef' in inputData and 'vnp_ResponseCode' in inputData:
         vnp = vnpay()
         vnp.responseData = inputData.dict()
         order_uuid = inputData['vnp_TxnRef']
         amount = int(inputData['vnp_Amount']) / 100
-        order_desc = inputData['vnp_OrderInfo']
-        transaction = inputData['vnp_TransactionNo']
-        response= inputData['vnp_ResponseCode']
-        # vnp_TmnCode = inputData['vnp_TmnCode']
-        # vnp_PayDate = inputData['vnp_PayDate']
-        # vnp_BankCode = inputData['vnp_BankCode']
-        # vnp_CardType = inputData['vnp_CardType']
-
+        order_desc = inputData.get('vnp_OrderInfo', '')
+        transaction = inputData.get('vnp_TransactionNo', '')
+        response = inputData['vnp_ResponseCode']
         if vnp.validate_response(settings.VNPAY_HASH_SECRET_KEY):
-            if response == "00":  # Thanh toán thành công
+            try:
                 order = get_object_or_404(Order, order_uuid=order_uuid)
-                order.status = OrderStatus.PAID.value
-                order.save()
+                if response == "00":
+                    order.status = OrderStatus.PAID.value
+                    order.save()
+                    success = True
+                else:
+                    success = False
                 if order.redirect_url:
-                    return HttpResponseRedirect(order.redirect_url)
-                return JsonResponse({
-                    "title": "Kết quả thanh toán",
-                    "result": "Thanh toán thành công",
-                    "order_uuid": order_uuid,
-                    "amount": amount,
-                    "order_desc": order_desc,
-                    "vnp_TransactionNo": transaction,
-                    "vnp_ResponseCode": response
-                })
-
-            else:
-                return JsonResponse({
-                    "title": "Kết quả thanh toán",
-                    "result": "Lỗi",
-                    "order_uuid": order_uuid,
-                    "amount": amount,
-                    "order_desc": order_desc,
-                    "vnp_TransactionNo": transaction,
-                    "vnp_ResponseCode": response
-                })
-        else:
-            # Sai checksum
-            return JsonResponse({
-                "title": "Kết quả thanh toán",
-                "result": "Lỗi",
-                "order_uuid": order_uuid,
-                "amount": amount,
-                "order_desc": order_desc,
-                "vnp_TransactionNo": transaction,
-                "vnp_ResponseCode": response,
-                "msg": "Sai checksum"
-            })
-    else:
-        return JsonResponse({
-            "title": "Kết quả thanh toán",
-            "result": "Không có dữ liệu"
-        })
+                    return_url = f"{order.redirect_url}?order_id={order.id}&success={str(success).lower()}"
+                    return HttpResponseRedirect(return_url)
+            except Exception as e:
+                print(f"Error processing payment: {e}")
+    return HttpResponseRedirect('/error')

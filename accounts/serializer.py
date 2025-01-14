@@ -31,6 +31,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         data = super().validate(attrs)
 
         user = self.user
+        data['userid'] = user.id
         data['username'] = user.username
         data['email'] = user.email
         data['phone'] = user.phone
@@ -126,7 +127,8 @@ class UpdateAccountSerializer(serializers.ModelSerializer):
     status = serializers.ChoiceField(choices=UserStatus.choices())
     class Meta:
         model = User
-        fields = ['username', 'email', 'phone', 'address', 'image', 'status']
+        # fields = ['username', 'email', 'phone', 'address', 'image', 'status']
+        exclude = ['password','groups','user_permissions','last_login','is_superuser','is_staff','date_joined']
 # Phân trang
 class CustomPagination(PageNumberPagination):
     page_size_query_param = 'page_size'
