@@ -29,6 +29,7 @@ class Order(models.Model):
     description = models.TextField()
     content = models.TextField()
     notes = models.TextField()
+    address = models.CharField(null=True,max_length=400)
     method = models.CharField(
         max_length=100, choices=TransactionMethod.choices(), default=TransactionMethod.NOPAY.value)
     payment_url = models.CharField(max_length=700, null=True, blank=True)
