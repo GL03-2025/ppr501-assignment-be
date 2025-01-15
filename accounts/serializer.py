@@ -12,6 +12,9 @@ from rest_framework.response import Response
 
 from django_filters.rest_framework import FilterSet, filters
 
+from orders.serializer import GetAllOrderSerializer
+
+
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
@@ -37,7 +40,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['phone'] = user.phone
         data['address'] = user.address
         data['status'] = user.status
-
+        data['accountid'] = user.accountdetail.id
         return data
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -85,6 +88,13 @@ class AccountDetailSerializer(serializers.ModelSerializer):
         model = AccountDetail
         fields = ['id', 'email']
 
+class GetAccountDetailSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(source='user.email')
+    orders = GetAllOrderSerializer(source='order_set', many=True)
+    class Meta:
+        model = AccountDetail
+        fields = ['id', 'email', 'orders']
+
 
 class SetNewPasswordSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
@@ -118,13 +128,14 @@ class ResetPasswordEmailRequestSerializer(serializers.Serializer):
 # map dữ liệu từ model sang json
 class GetAccountSerializer(serializers.ModelSerializer):
     status = serializers.ChoiceField(choices=UserStatus.choices())
+    account_detail = GetAccountDetailSerializer(source='accountdetail', read_only=True)
     class Meta:
         model = User
         fields = '__all__'
-       # depth = 1 Dùng để lấy các bảng con
 
 class UpdateAccountSerializer(serializers.ModelSerializer):
     status = serializers.ChoiceField(choices=UserStatus.choices())
+    account_detail = GetAccountDetailSerializer(source='accountdetail', read_only=True)
     class Meta:
         model = User
         # fields = ['username', 'email', 'phone', 'address', 'image', 'status']

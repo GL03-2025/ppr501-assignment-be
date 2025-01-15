@@ -99,7 +99,7 @@ class OrderTmpListView(viewsets.ModelViewSet):
 class OrderTmpCreateView(generics.CreateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderCreateSerializer
-    #permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
 # Không cần bật phân quyền cho API này
 @api_view(['GET'])
