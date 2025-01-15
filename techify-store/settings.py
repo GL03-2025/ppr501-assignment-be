@@ -190,7 +190,10 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 # add cors
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000", 
+    "http://127.0.0.1:3000",
+]
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Ecommerce API',
