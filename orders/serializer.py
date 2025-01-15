@@ -21,20 +21,21 @@ class OrderSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'accountId': {'required': False}
         }
-
-class CreateOrderResponseSerializer(serializers.ModelSerializer):
-    accountDetail = AccountDetailSerializer(source='accountId')
-
-    class Meta:
-        model = Order
-        #fields = ['id', 'accountDetail', 'amount', 'status', 'description', 'content', 'notes', 'method']
-        fields = ['id', 'accountDetail', 'amount', 'description', 'content', 'notes' ]
-
 class GetOrderDetailSerializer(serializers.ModelSerializer):
     productId = GetProductSerializer() # Lấy từ products.serializers
     class Meta:
         model = OrderDetail
         fields = '__all__'
+
+class CreateOrderResponseSerializer(serializers.ModelSerializer):
+    accountDetail = AccountDetailSerializer(source='accountId', read_only=True)
+    order_details = GetOrderDetailSerializer(many=True, read_only=True)
+    class Meta:
+        model = Order
+       # fields = ['id', 'accountDetail', 'amount', 'status', 'description', 'content', 'notes', 'method']
+        fields = '__all__'
+        read_only_fields = ['payment_url', 'redirect_url', 'order_uuid', 'accountId']
+
 class GetAllOrderSerializer(serializers.ModelSerializer):
     order_details = GetOrderDetailSerializer(many=True)
     class Meta:

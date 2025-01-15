@@ -41,16 +41,20 @@ class OrderCreateView(generics.CreateAPIView):
         account_detail, created = AccountDetail.objects.get_or_create(user=self.request.user)
         serializer.save(accountId=account_detail)
 
-class OrderDetailView(generics.RetrieveAPIView):
+# class OrderDetailView(generics.RetrieveAPIView):
+#     queryset = Order.objects.all()
+#     serializer_class = CreateOrderResponseSerializer
+#     permission_classes = [IsAuthenticated]
+#
+#     def get_object(self):
+#         order = super().get_object()
+#         if order.accountId.user != self.request.user:
+#             raise NotFound("You do not have permission to view this order.")
+#         return order
+
+class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Order.objects.all()
     serializer_class = CreateOrderResponseSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_object(self):
-        order = super().get_object()
-        if order.accountId.user != self.request.user:
-            raise NotFound("You do not have permission to view this order.")
-        return order
 
 class OrderListView(generics.ListAPIView):
     serializer_class = CreateOrderResponseSerializer
