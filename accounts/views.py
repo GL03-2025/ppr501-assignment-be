@@ -28,8 +28,9 @@ class RegisterView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response({'message': 'User added successfully'}, status=status.HTTP_201_CREATED)
+        new_user = serializer.save()
+        new_user_serialized = self.get_serializer(new_user)
+        return Response(new_user_serialized.data, status=status.HTTP_201_CREATED)
 
 class SetNewPasswordView(generics.CreateAPIView):
     permission_classes = (AllowAny,)
