@@ -57,7 +57,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('email', 'username', 'last_name', 'first_name', 'password', 'phone', 'address', 'image', 'status')
+        fields = ('id', 'email', 'username', 'last_name', 'first_name', 'password', 'phone', 'address', 'image', 'status')
 
     def create(self, validated_data):
         # Lấy giá trị status từ validated_data, nếu không có thì mặc định là 'active'
